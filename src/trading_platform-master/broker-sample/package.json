@@ -1,7 +1,11 @@
 {
   "private": true,
   "dependencies": {
-    "tslib": "2.5.0"
+    "tslib": "2.5.0",
+    "@rollup/rollup-linux-x64-gnu": "4.24.4",
+    "@rollup/rollup-linux-arm64-gnu": "4.24.4",
+    "@rollup/rollup-linux-x64-musl": "4.24.4",
+    "@rollup/rollup-linux-arm64-musl": "4.24.4"
   },
   "devDependencies": {
     "@jridgewell/gen-mapping": "0.3.5",
@@ -10,10 +14,6 @@
     "@types/jquery": "1.10.31",
     "rollup": "~4.24.4",
     "typescript": "5.5.4"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.24.4",
-    "@rollup/rollup-linux-arm64-gnu": "4.24.4"
   },
   "scripts": {
     "compile": "tsc",

@@ -39,8 +39,6 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   className,
   ...props
 }) => {
-  // Demo Mode: Disable all interactions
-  const disabledOverlay = "pointer-events-none opacity-80 select-none";
   const { symbol } = useTrading()
   const { subscribe, unsubscribe, lastQuotes, normalizeSymbol, isConnected } = useWebSocket()
   const { currentBalance } = useAccount()
@@ -1134,14 +1132,7 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   }
 
   return (
-    <div
-      className={cn(
-        "flex flex-col h-full bg-[#181926] border-l border-[#262932] overflow-hidden",
-        className,
-        disabledOverlay
-      )}
-      {...props}
-    >
+    <div className={cn("w-full h-full flex flex-col glass-card border border-white/10 rounded-lg overflow-hidden", className)} {...props}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.02]">
         <div className="flex items-center gap-2.5">

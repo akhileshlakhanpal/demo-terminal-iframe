@@ -1,0 +1,74 @@
+/* Custom styles for TradingView Charting Library UI */
+
+/* Target the main layout areas for toolbars/strips */
+.layout__area--top,
+.layout__area--left,
+.layout__area--bottom,
+.layout__area--right {
+    background-color: #02040d !important;
+    border: 1px solid #1f2937 !important;
+    /* gray-800 equivalent */
+    z-index: 10 !important;
+}
+
+/* Ensure the drawing toolbar specifically gets the treatment if it's inside an area */
+.drawing-toolbar {
+    background-color: #02040d !important;
+    border: 1px solid #1f2937 !important;
+}
+
+/* Background for the entire chart container area to avoid white flashes or misalignments */
+.chart-container {
+    background-color: #02040d !important;
+}
+
+/* 
+   Only show in toolbar outside not in side anywhere and in idntdicator 
+   This means we shouldn't affect the inner chart widgets or indicators themselves
+*/
+
+/* Hide internal dividers of the layout areas to keep the clean "outer border" look */
+.layout__area--top .header-chart-panel {
+    border: none !important;
+}
+
+.layout__area--left .left-toolbar {
+    border: none !important;
+}
+
+.layout__area--bottom .footer-chart-panel {
+    border: none !important;
+}
+
+/* Hide Buy/Sell buttons from the chart legend */
+.chart-controls-bar__button--buy,
+.chart-controls-bar__button--sell,
+.chart-controls-bar__button[data-name="buy"],
+.chart-controls-bar__button[data-name="sell"],
+.tv-legend__buy-button,
+.tv-legend__sell-button,
+.tv-legend__button--buy,
+.tv-legend__button--sell,
+.legend-buttons__buy,
+.legend-buttons__sell,
+[data-name="buy-button"],
+[data-name="sell-button"],
+button[aria-label*="Buy"],
+button[aria-label*="Sell"],
+button[title*="Buy"],
+button[title*="Sell"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Hide buy/sell button containers */
+.tv-legend__buy-sell-buttons,
+.legend-buttons,
+.chart-controls-bar__buy-sell {
+    display: none !important;
+}

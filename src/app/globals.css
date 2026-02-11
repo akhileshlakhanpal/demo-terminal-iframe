@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Manrope:wght@200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Manrope', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Zuperior Brand Colors */
+  --color-primary: #8B5CF6;
+  --color-primary-foreground: #FFFFFF;
+  --color-success: #16A34A;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+  --color-info: #3B82F6;
+  --color-background: #01040D;
+  --color-foreground: #FAFAFA;
+}
+
+/* Global font-family configuration */
+html:lang(en),
+body:lang(en),
+html:lang(es),
+body:lang(es),
+html:lang(fr),
+body:lang(fr),
+html:lang(id),
+body:lang(id),
+html:lang(pt),
+body:lang(pt),
+html:lang(sw),
+body:lang(sw),
+html:lang(uz),
+body:lang(uz) {
+  font-family: 'Manrope', 'Manrope Fallback', sans-serif;
+  font-style: normal;
+}
+
+/* Apply Manrope to all elements */
+* {
+  font-family: 'Manrope', 'Manrope Fallback', sans-serif;
+  font-style: normal;
+}
+
+/* Global styles for full screen height */
+
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #02040d !important;
+  /* Zuperior Background */
+  /* Ensure gaps are visible as black */
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #20232A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #A8B1BD;
+  border: 3.5px solid #20232A;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C0C8D4;
+}
+
+::-webkit-scrollbar-corner {
+  background: #20232A;
+}
+
+/* Navbar specific scrollbar */
+.navbar-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.navbar-scrollbar::-webkit-scrollbar-thumb {
+  border: 1px solid #20232A;
+  border-radius: 3px;
+}
+
+.navbar-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Wavy / Shimmer Loader for Financial Data */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 25%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes wavyText {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translateY(-3px);
+    opacity: 0.8;
+  }
+}
+
+.animate-wavy {
+  display: inline-block;
+  animation: wavyText 1s ease-in-out infinite;
+}
+
+/* Force Reveal Terminal for Demo Mode */
+/* Targeted at the root layout container */
+#__next,
+#root,
+body>div:first-child {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: 100% !important;
+}
+
+/* DEBUG: Force border for visibility check */
+.border-green-500 {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 999999 !important;
+  position: relative !important;
+}
+
+/* ---------------------------------------------------- */
+/* AGGRESSIVE SPLASH SCREEN REMOVAL / LOGO CONTAINMENT */
+/* ---------------------------------------------------- */
+
+/* 1. Hide any global overlay with high z-index and dark background */
+/* 1. Hide any global overlay with high z-index and dark background */
+/* COMMENTED OUT - This likely hid the main app container causing the layout break */
+/*
+div[class*="fixed"][class*="inset-0"][class*="z-50"],
+div[class*="fixed"][class*="inset-0"][class*="z-[99]"],
+div[class*="fixed"][class*="inset-0"][class*="z-[999]"],
+div[class*="fixed"][class*="inset-0"][class*="z-[9999]"] {
+  display: none !important;
+}
+*/
+
+/* 2. Hide any image with alt="Zuperior" (Navbar now uses "Zuperior Navbar") */
+img[alt="Zuperior"] {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+/* 3. Force max-height on any Logo Full image to prevent huge splash screens */
+img[src*="logo-full"] {
+  max-height: 40px !important;
+  /* Slightly larger than navbar for safety */
+  object-fit: contain !important;
+}
+
+/* 4. Hide any fixed container that holds the logo */
+/* Uses :has selector - widely supported in modern browsers */
+div.fixed:has(img[src*="logo-full"]),
+div.absolute.inset-0:has(img[src*="logo-full"]) {
+  display: none !important;
+}
+
+/* 5. Hide scroll lock override just in case */
+.antigravity-scroll-lock {
+  display: none !important;
+  pointer-events: none !important;
+}

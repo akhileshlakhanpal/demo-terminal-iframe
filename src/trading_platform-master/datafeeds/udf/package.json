@@ -10,6 +10,10 @@
     "rollup": "~4.24.4",
     "typescript": "5.5.4"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.24.4",
+    "@rollup/rollup-linux-arm64-gnu": "4.24.4"
+  },
   "scripts": {
     "compile": "tsc",
     "bundle-js": "rollup -c rollup.config.mjs",

@@ -578,35 +578,11 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   const renderPriceButtonsSolid = () => (
     <div className="relative grid grid-cols-2 gap-3">
       <button
-        onClick={async () => {
-          if (isMarketClosed) {
-            setMarketClosedToast(marketClosedMessage)
-            return
-          }
-          if (isLoading) return;
-          setPendingOrderSide('sell');
-          setIsLoading(true);
-          try {
-            onSell?.({
-              orderType,
-              pendingOrderType: orderType === "pending" ? pendingOrderType : undefined,
-              volume: parseFloat(volume),
-              openPrice: openPrice ? parseFloat(openPrice) : currentSellPrice,
-              stopLoss: undefined,
-              takeProfit: undefined,
-            });
-            setTimeout(() => {
-              setIsLoading(false);
-              setPendingOrderSide(null);
-            }, 1000);
-          } catch (err) {
-            setIsLoading(false);
-            setPendingOrderSide(null);
-          }
+        onClick={() => {
+          window.open('https://dashboard.zuperior.com', '_blank');
         }}
-        disabled={true}
         className={cn(
-          "rounded-xl p-4 bg-[#FF5555] opacity-50 cursor-not-allowed text-left relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#FF5555]",
+          "rounded-xl p-4 bg-[#FF5555] hover:bg-[#FF5555]/90 cursor-pointer text-left relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#FF5555]",
           isLoading && "opacity-80"
         )}
       >
@@ -628,35 +604,11 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
       </button>
 
       <button
-        onClick={async () => {
-          if (isMarketClosed) {
-            setMarketClosedToast(marketClosedMessage)
-            return
-          }
-          if (isLoading) return;
-          setPendingOrderSide('buy');
-          setIsLoading(true);
-          try {
-            onBuy?.({
-              orderType,
-              pendingOrderType: orderType === "pending" ? pendingOrderType : undefined,
-              volume: parseFloat(volume),
-              openPrice: openPrice ? parseFloat(openPrice) : currentBuyPrice,
-              stopLoss: undefined,
-              takeProfit: undefined,
-            });
-            setTimeout(() => {
-              setIsLoading(false);
-              setPendingOrderSide(null);
-            }, 1000);
-          } catch (err) {
-            setIsLoading(false);
-            setPendingOrderSide(null);
-          }
+        onClick={() => {
+          window.open('https://dashboard.zuperior.com', '_blank');
         }}
-        disabled={true}
         className={cn(
-          "rounded-xl p-4 bg-[#4A9EFF] opacity-50 cursor-not-allowed text-right relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#4A9EFF]",
+          "rounded-xl p-4 bg-[#4A9EFF] hover:bg-[#4A9EFF]/90 cursor-pointer text-right relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#4A9EFF]",
           isLoading && "opacity-80"
         )}
       >
@@ -758,10 +710,13 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
       <div className="relative grid grid-cols-2 gap-3">
         <button
           type="button"
-          disabled={true}
+          onClick={() => {
+            window.open('https://dashboard.zuperior.com', '_blank');
+          }}
           className={cn(
-            "rounded-xl p-4 border-2 transition-all opacity-50 cursor-not-allowed text-left min-h-[72px]",
-            sellButtonBorder
+            "rounded-xl p-4 border-2 transition-all cursor-pointer text-left min-h-[72px]",
+            sellButtonBorder,
+            sellButtonHover
           )}
         >
           <div className="text-[13px] text-white/50 mb-0.5 font-medium">Sell</div>
@@ -774,10 +729,13 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
 
         <button
           type="button"
-          disabled={true}
+          onClick={() => {
+            window.open('https://dashboard.zuperior.com', '_blank');
+          }}
           className={cn(
-            "rounded-xl p-4 border-2 transition-all opacity-50 cursor-not-allowed text-right min-h-[72px]",
-            buyButtonBorder
+            "rounded-xl p-4 border-2 transition-all cursor-pointer text-right min-h-[72px]",
+            buyButtonBorder,
+            buyButtonHover
           )}
         >
           <div className="text-[13px] text-white/50 mb-0.5 font-medium">Buy</div>
@@ -1376,78 +1334,11 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
 
                 <div className="flex flex-col gap-2 pt-2">
                   <button
-                    disabled={true}
-                    onClick={async () => {
-                      if (isMarketClosed) {
-                        setMarketClosedToast(marketClosedMessage)
-                        return
-                      }
-                      if (isLoading) return;
-                      const handler = pendingOrderSide === 'buy' ? onBuy : onSell
-                      if (!handler) return
-                      const finalVolume = parseFloat(volume) || 0.01
-                      if (finalVolume <= 0) {
-                        return
-                      }
-                      let finalStopLoss: number | undefined = undefined
-                      let finalTakeProfit: number | undefined = undefined
-
-                      const isBuy = pendingOrderSide === 'buy'
-
-                      if (stopLossMode === "price") {
-                        finalStopLoss = stopLoss ? parseFloat(stopLoss) : undefined
-                      } else if (stopLossMode === "pips" && stopLoss) {
-                        const pips = parseFloat(stopLoss)
-                        if (!isNaN(pips)) {
-                          const calculatedPrice = calculatePriceFromPips(pips, isBuy, true)
-                          if (calculatedPrice !== null) {
-                            finalStopLoss = calculatedPrice
-                          }
-                        }
-                      }
-
-                      if (takeProfitMode === "price") {
-                        finalTakeProfit = takeProfit ? parseFloat(takeProfit) : undefined
-                      } else if (takeProfitMode === "pips" && takeProfit) {
-                        const pips = parseFloat(takeProfit)
-                        if (!isNaN(pips) && pips > 0) {
-                          const calculatedPrice = calculatePriceFromPips(pips, isBuy, false)
-                          if (calculatedPrice !== null) {
-                            finalTakeProfit = calculatedPrice
-                          }
-                        }
-                      }
-
-                      if (orderType === 'pending' && !openPrice) {
-                        alert('Please enter an open price for pending orders')
-                        return
-                      }
-
-                      const orderData: OrderData = {
-                        orderType,
-                        pendingOrderType: orderType === "pending" ? pendingOrderType : undefined,
-                        volume: finalVolume,
-                        openPrice: orderType === 'market'
-                          ? (pendingOrderSide === 'buy' ? currentBuyPrice : currentSellPrice)
-                          : (openPrice ? parseFloat(openPrice) : undefined),
-                        stopLoss: finalStopLoss,
-                        takeProfit: finalTakeProfit,
-                      }
-
-                      setIsLoading(true);
-                      try {
-                        handler(orderData);
-                        setTimeout(() => {
-                          setIsLoading(false);
-                          setPendingOrderSide(null);
-                        }, 1000);
-                      } catch (err) {
-                        setIsLoading(false);
-                        setPendingOrderSide(null);
-                      }
+                    onClick={() => {
+                      window.open('https://dashboard.zuperior.com', '_blank');
                     }}
                     className={cn(
-                      "w-full font-bold h-12 rounded-xl transition-all flex flex-col items-center justify-center relative overflow-hidden text-white shadow-lg opacity-50 cursor-not-allowed",
+                      "w-full font-bold h-12 rounded-xl transition-all flex flex-col items-center justify-center relative overflow-hidden text-white shadow-lg cursor-pointer hover:brightness-110 active:scale-[0.98]",
                       pendingOrderSide === 'buy' ? 'bg-[#4A9EFF]' : 'bg-[#FF5555]',
                       isLoading && "opacity-80"
                     )}

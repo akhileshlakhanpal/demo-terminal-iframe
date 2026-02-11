@@ -606,7 +606,7 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
         }}
         disabled={isLoading}
         className={cn(
-          "rounded-md p-3 bg-[#FF5555] hover:bg-[#FF5555]/90 cursor-pointer text-left relative overflow-hidden transition-all text-white",
+          "rounded-xl p-4 bg-[#FF5555] hover:bg-[#FF5555]/90 cursor-pointer text-left relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#FF5555]",
           isLoading && "opacity-80"
         )}
       >
@@ -614,19 +614,16 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] z-10">
             <div className="flex gap-1">
               {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="w-1.5 h-1.5 bg-white rounded-full opacity-80"
-                />
+                <div key={i} className="w-1.5 h-1.5 bg-white rounded-full opacity-80 animate-pulse" />
               ))}
             </div>
           </div>
         )}
-        <div className="text-xs text-white/80 mb-1">Sell</div>
-        <div className="price-font text-white font-bold text-sm leading-tight">
-          {Math.floor(currentSellPrice).toLocaleString()}
-          <span className="text-lg">.{String(Math.floor((currentSellPrice % 1) * 100)).padStart(2, '0')}</span>
-          <sup className="text-sm">{String(Math.floor((currentSellPrice % 1) * 1000) % 10)}</sup>
+        <div className="text-[13px] text-white/80 mb-0.5 font-medium">Sell</div>
+        <div className="price-font text-white font-bold text-[15px] leading-none flex items-baseline gap-0.5">
+          <span>{Math.floor(currentSellPrice).toLocaleString()}</span>
+          <span className="text-[20px]">.{String(Math.floor((currentSellPrice % 1) * 100)).padStart(2, '0')}</span>
+          <sup className="text-[14px] top-[-0.6em]">{String(Math.floor((currentSellPrice % 1) * 1000) % 10)}</sup>
         </div>
       </button>
 
@@ -659,7 +656,7 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
         }}
         disabled={isLoading}
         className={cn(
-          "rounded-md p-3 bg-[#4A9EFF] hover:bg-[#4A9EFF]/90 cursor-pointer text-right relative overflow-hidden transition-all text-white",
+          "rounded-xl p-4 bg-[#4A9EFF] hover:bg-[#4A9EFF]/90 cursor-pointer text-right relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#4A9EFF]",
           isLoading && "opacity-80"
         )}
       >
@@ -667,24 +664,22 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] z-10">
             <div className="flex gap-1">
               {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="w-1.5 h-1.5 bg-white rounded-full opacity-80"
-                />
+                <div key={i} className="w-1.5 h-1.5 bg-white rounded-full opacity-80 animate-pulse" />
               ))}
             </div>
           </div>
         )}
-        <div className="text-xs text-white/80 mb-1">Buy</div>
-        <div className="price-font text-white font-bold text-sm leading-tight">
-          {Math.floor(currentBuyPrice).toLocaleString()}
-          <span className="text-lg">.{String(Math.floor((currentBuyPrice % 1) * 100)).padStart(2, '0')}</span>
-          <sup className="text-sm">{String(Math.floor((currentBuyPrice % 1) * 1000) % 10)}</sup>
+        <div className="text-[13px] text-white/80 mb-0.5 font-medium">Buy</div>
+        <div className="price-font text-white font-bold text-[15px] leading-none flex items-baseline justify-end gap-0.5">
+          <span>{Math.floor(currentBuyPrice).toLocaleString()}</span>
+          <span className="text-[20px]">.{String(Math.floor((currentBuyPrice % 1) * 100)).padStart(2, '0')}</span>
+          <sup className="text-[14px] top-[-0.6em]">{String(Math.floor((currentBuyPrice % 1) * 1000) % 10)}</sup>
         </div>
       </button>
 
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 px-2 py-0.5 rounded backdrop-blur-xl bg-white/[0.03] border border-white/10 text-[10px] text-white/80 font-medium whitespace-nowrap z-10">
-        {currentSpread} {isConnected && <span className="text-green-500 ml-1">●</span>}
+      <div className="absolute left-1/2 bottom-[-10px] -translate-x-1/2 px-2.5 py-1 rounded-full backdrop-blur-md bg-white/[0.05] border border-white/10 text-[11px] text-white/90 font-bold whitespace-nowrap z-20 flex items-center gap-1.5 shadow-lg">
+        <span>{currentSpread}</span>
+        <span className="text-green-400 text-[8px]">●</span>
       </div>
     </div>
   )
@@ -763,28 +758,26 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
       <div className="relative grid grid-cols-2 gap-3">
         <button
           type="button"
-          className={`rounded-md p-3 border-2 ${sellButtonBorder} bg-transparent ${readOnly ? '' : sellButtonHover} text-left cursor-pointer`}
+          className={cn(
+            "rounded-xl p-4 border-2 transition-all cursor-pointer text-left min-h-[72px]",
+            sellButtonBorder,
+            !readOnly && sellButtonHover
+          )}
           onClick={readOnly ? undefined : () => {
             if (isMarketClosed) {
               setMarketClosedToast(marketClosedMessage)
               return
             }
             if (showConfirmation) {
-              // In regular form, set pending order side to show confirmation
               setPendingOrderSide('sell')
             } else {
-              // In risk calculator or pending orders, place order directly
               if (!onSell) return
-              if (!finalVolume || finalVolume <= 0) {
-                return
-              }
-              // For pending orders, validate that openPrice is provided
+              if (!finalVolume || finalVolume <= 0) return
               if (orderType === 'pending' && !finalOpenPrice) {
                 alert('Please enter an open price for pending orders')
                 return
               }
 
-              // Calculate Sell-specific SL/TP if in Pips mode
               let sellStopLoss = finalStopLoss
               let sellTakeProfit = finalTakeProfit
 
@@ -792,7 +785,6 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                 const pips = parseFloat(stopLoss)
                 if (!isNaN(pips)) {
                   const pipSize = getPipSize
-                  // For Sell: SL is ABOVE entry (Entry + Pips)
                   const entry = orderType === 'market' ? currentSellPrice : (finalOpenPrice || 0)
                   sellStopLoss = entry + (pips * pipSize)
                 }
@@ -802,7 +794,6 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                 const pips = parseFloat(takeProfit)
                 if (!isNaN(pips) && pips > 0) {
                   const pipSize = getPipSize
-                  // For Sell: TP is BELOW entry (Entry - Pips)
                   const entry = orderType === 'market' ? currentSellPrice : (finalOpenPrice || 0)
                   sellTakeProfit = entry - (pips * pipSize)
                 }
@@ -821,38 +812,36 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
           }}
           disabled={readOnly}
         >
-          <div className="text-xs text-white/60 mb-1">Sell</div>
-          <div className={`price-font ${sellButtonTextColor} font-bold text-sm leading-tight`}>
-            {Math.floor(currentSellPrice).toLocaleString()}
-            <span className="text-lg">.{String(Math.floor((currentSellPrice % 1) * 100)).padStart(2, '0')}</span>
-            <sup className="text-sm">{String(Math.floor((currentSellPrice % 1) * 1000) % 10)}</sup>
+          <div className="text-[13px] text-white/50 mb-0.5 font-medium">Sell</div>
+          <div className={cn("price-font font-bold text-[15px] leading-none flex items-baseline gap-0.5", sellButtonTextColor)}>
+            <span>{Math.floor(currentSellPrice).toLocaleString()}</span>
+            <span className="text-[20px]">.{String(Math.floor((currentSellPrice % 1) * 100)).padStart(2, '0')}</span>
+            <sup className="text-[14px] top-[-0.6em]">{String(Math.floor((currentSellPrice % 1) * 1000) % 10)}</sup>
           </div>
         </button>
 
         <button
           type="button"
-          className={`rounded-md p-3 border-2 ${buyButtonBorder} bg-transparent ${readOnly ? '' : buyButtonHover} text-right cursor-pointer`}
+          className={cn(
+            "rounded-xl p-4 border-2 transition-all cursor-pointer text-right min-h-[72px]",
+            buyButtonBorder,
+            !readOnly && buyButtonHover
+          )}
           onClick={readOnly ? undefined : () => {
             if (isMarketClosed) {
               setMarketClosedToast(marketClosedMessage)
               return
             }
             if (showConfirmation) {
-              // In regular form, set pending order side to show confirmation
               setPendingOrderSide('buy')
             } else {
-              // In risk calculator or pending orders, place order directly
               if (!onBuy) return
-              if (!finalVolume || finalVolume <= 0) {
-                return
-              }
-              // For pending orders, validate that openPrice is provided
+              if (!finalVolume || finalVolume <= 0) return
               if (orderType === 'pending' && !finalOpenPrice) {
                 alert('Please enter an open price for pending orders')
                 return
               }
 
-              // Calculate Buy-specific SL/TP if in Pips mode
               let buyStopLoss = finalStopLoss
               let buyTakeProfit = finalTakeProfit
 
@@ -860,7 +849,6 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                 const pips = parseFloat(stopLoss)
                 if (!isNaN(pips)) {
                   const pipSize = getPipSize
-                  // For Buy: SL is BELOW entry (Entry - Pips)
                   const entry = orderType === 'market' ? currentBuyPrice : (finalOpenPrice || 0)
                   buyStopLoss = entry - (pips * pipSize)
                 }
@@ -870,7 +858,6 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                 const pips = parseFloat(takeProfit)
                 if (!isNaN(pips) && pips > 0) {
                   const pipSize = getPipSize
-                  // For Buy: TP is ABOVE entry (Entry + Pips)
                   const entry = orderType === 'market' ? currentBuyPrice : (finalOpenPrice || 0)
                   buyTakeProfit = entry + (pips * pipSize)
                 }
@@ -889,16 +876,17 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
           }}
           disabled={readOnly}
         >
-          <div className="text-xs text-white/60 mb-1">Buy</div>
-          <div className={`price-font ${buyButtonTextColor} font-bold text-sm leading-tight`}>
-            {Math.floor(currentBuyPrice).toLocaleString()}
-            <span className="text-lg">.{String(Math.floor((currentBuyPrice % 1) * 100)).padStart(2, '0')}</span>
-            <sup className="text-sm">{String(Math.floor((currentBuyPrice % 1) * 1000) % 10)}</sup>
+          <div className="text-[13px] text-white/50 mb-0.5 font-medium">Buy</div>
+          <div className={cn("price-font font-bold text-[15px] leading-none flex items-baseline justify-end gap-0.5", buyButtonTextColor)}>
+            <span>{Math.floor(currentBuyPrice).toLocaleString()}</span>
+            <span className="text-[20px]">.{String(Math.floor((currentBuyPrice % 1) * 100)).padStart(2, '0')}</span>
+            <sup className="text-[14px] top-[-0.6em]">{String(Math.floor((currentBuyPrice % 1) * 1000) % 10)}</sup>
           </div>
         </button>
 
-        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 px-2 py-0.5 rounded backdrop-blur-xl bg-white/[0.03] border border-white/10 text-[10px] text-white/80 font-medium whitespace-nowrap z-10">
-          {currentSpread} {isConnected && <span className="text-green-500 ml-1">●</span>}
+        <div className="absolute left-1/2 bottom-[-10px] -translate-x-1/2 px-2.5 py-1 rounded-full backdrop-blur-md bg-white/[0.05] border border-white/10 text-[11px] text-white/90 font-bold whitespace-nowrap z-20 flex items-center gap-1.5 shadow-lg">
+          <span>{currentSpread}</span>
+          <span className="text-green-400 text-[8px]">●</span>
         </div>
       </div>
     )
@@ -1085,38 +1073,47 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   ) => (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <div className="text-xs font-medium text-white/80">{label}</div>
-        {showTooltip && (
-          <Tooltip text={`Set ${label.toLowerCase()}`}>
-            <HelpCircle className="h-3.5 w-3.5 text-white/40" />
-          </Tooltip>
-        )}
+        <div className="flex items-center gap-1.5">
+          <div className="text-[13px] font-medium text-white/60">{label}</div>
+          {showTooltip && (
+            <Tooltip text={`Set ${label.toLowerCase()}`}>
+              <HelpCircle className="h-3.5 w-3.5 text-white/30" />
+            </Tooltip>
+          )}
+        </div>
       </div>
-      <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+      <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-12">
         <Input
           type="number"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Not set"
-          className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/40"
+          className="flex-1 border-0 bg-transparent text-center price-font text-[15px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/20 text-white font-medium"
         />
-        <select value={mode} onChange={(e) => onModeChange(e.target.value)} className="w-[70px] border-0 h-9 bg-transparent text-xs text-white focus:outline-none focus:ring-0">
-          {modeOptions.map(opt => (
-            <option key={opt.value} value={opt.value} className="bg-[#1a1f28]">{opt.label}</option>
-          ))}
-        </select>
-        <button
-          onClick={() => decrementField(value, onChange)}
-          className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-        >
-          <Minus className="h-3.5 w-3.5 text-white/60" />
-        </button>
-        <button
-          onClick={() => incrementField(value, onChange)}
-          className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-        >
-          <Plus className="h-3.5 w-3.5 text-white/60" />
-        </button>
+
+        <div className="flex items-center border-x border-white/5 bg-white/[0.02]">
+          <select
+            value={mode}
+            onChange={(e) => onModeChange(e.target.value)}
+            className="bg-transparent border-0 text-[13px] text-white/60 px-2.5 focus:outline-none focus:ring-0 cursor-pointer appearance-none min-w-[65px] text-center"
+          >
+            {modeOptions.map(opt => (
+              <option key={opt.value} value={opt.value} className="bg-[#0a0b10]">{opt.label}</option>
+            ))}
+          </select>
+          <svg className="w-3 h-3 text-white/30 -ml-1.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+
+        <div className="flex items-center gap-1 px-3">
+          <button onClick={() => decrementField(value, onChange)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+            <Minus className="w-4 h-4 text-white/60" />
+          </button>
+          <button onClick={() => incrementField(value, onChange)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+            <Plus className="w-4 h-4 text-white/60" />
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -1134,31 +1131,47 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
   return (
     <div className={cn("w-full h-full flex flex-col glass-card border border-white/10 rounded-lg overflow-hidden", className)} {...props}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.02]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5">
-            <FlagIcon symbol={symbol || 'BTCUSD'} />
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.05] bg-white/[0.01]">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+              <span className="text-[10px] font-bold text-amber-500">A</span>
+            </div>
+            <div className="w-5 h-5">
+              <FlagIcon symbol={symbol || 'XAUUSDm'} />
+            </div>
           </div>
-          <span className="text-sm font-semibold text-white">{formatSymbolDisplay(symbol) || 'Select Symbol'}</span>
+          <span className="text-[15px] font-bold text-white tracking-tight">{formatSymbolDisplay(symbol) || 'Select Symbol'}</span>
         </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-white/10 hover:border border-transparent hover:border-white/20 cursor-pointer group"
+            className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors cursor-pointer group"
             title="Close Order Panel"
           >
-            <X className="h-4 w-4 text-white/60 group-hover:text-white" />
+            <X className="h-4.5 w-4.5 text-white/40 group-hover:text-white" />
           </button>
         )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin">
         {/* Form Type Selector */}
-        <select value={formType} onChange={(e) => handleFormTypeChange(e.target.value as FormType)} className="w-full bg-white/[0.02] border border-white/10 rounded-md h-9 px-3 text-sm text-white focus:outline-none focus:ring-0 focus:border-[#8B5CF6]">
-          <option value="regular" className="bg-[#1a1f28]">Regular form</option>
-          <option value="one-click" className="bg-[#1a1f28]">One-click form</option>
-          <option value="risk-calculator" className="bg-[#1a1f28]">Risk calculator form</option>
-        </select>
+        <div className="relative group">
+          <select
+            value={formType}
+            onChange={(e) => handleFormTypeChange(e.target.value as FormType)}
+            className="w-full bg-[#0a0b10] border border-white/10 rounded-xl h-12 px-4 text-[14px] text-white appearance-none focus:outline-none focus:ring-0 focus:border-white/20 cursor-pointer pr-10"
+          >
+            <option value="regular" className="bg-[#0a0b10]">Regular form</option>
+            <option value="one-click" className="bg-[#0a0b10]">One-click form</option>
+            <option value="risk-calculator" className="bg-[#0a0b10]">Risk calculator form</option>
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40 group-hover:text-white/60 transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </div>
+        </div>
 
         {/* ONE-CLICK FORM */}
         {formType === "one-click" && (
@@ -1166,9 +1179,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             <Tabs value={orderType === "pending" ? "limit" : orderType} onValueChange={(value: string) => {
               setOrderType(value === "limit" ? "pending" : (value as "market" | "pending"))
             }}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="market">Market</TabsTrigger>
-                <TabsTrigger value="limit">Limit</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-[#0a0b10] border border-white/5 p-1 rounded-xl h-11">
+                <TabsTrigger value="market" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Market</TabsTrigger>
+                <TabsTrigger value="limit" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Limit</TabsTrigger>
               </TabsList>
             </Tabs>
 
@@ -1176,9 +1189,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
               <>
                 {/* Pending Order Type Selector: Limit vs Stop */}
                 <Tabs value={pendingOrderType} onValueChange={(value: string) => setPendingOrderType(value as "limit" | "stop")}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="limit">Limit</TabsTrigger>
-                    <TabsTrigger value="stop">Stop</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 bg-[#0a0b10] border border-white/5 p-1 rounded-xl h-11">
+                    <TabsTrigger value="limit" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Limit</TabsTrigger>
+                    <TabsTrigger value="stop" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Stop</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
@@ -1189,29 +1202,25 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                       <HelpCircle className="h-3.5 w-3.5 text-white/40" />
                     </Tooltip>
                   </div>
-                  <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+                  <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-11">
                     <Input
                       type="number"
                       value={openPrice}
                       onChange={(e) => setOpenPrice(e.target.value)}
                       placeholder={currentBuyPrice.toFixed(3)}
-                      className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/40"
+                      className="flex-1 border-0 bg-transparent text-center price-font text-[14px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/20 text-white"
                     />
-                    <div className="flex items-center justify-center px-3 text-xs text-white/60 min-w-[50px]">
+                    <div className="flex items-center px-3 border-x border-white/5 text-[12px] text-white/40 min-w-[50px] justify-center font-medium">
                       {pendingOrderType === "limit" ? "Limit" : "Stop"}
                     </div>
-                    <button
-                      onClick={() => decrementField(openPrice, setOpenPrice)}
-                      className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                    >
-                      <Minus className="h-3.5 w-3.5 text-white/60" />
-                    </button>
-                    <button
-                      onClick={() => incrementField(openPrice, setOpenPrice)}
-                      className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                    >
-                      <Plus className="h-3.5 w-3.5 text-white/60" />
-                    </button>
+                    <div className="flex items-center gap-1 px-2">
+                      <button onClick={() => decrementField(openPrice, setOpenPrice)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 cursor-pointer">
+                        <Minus className="w-4 h-4 text-white/60" />
+                      </button>
+                      <button onClick={() => incrementField(openPrice, setOpenPrice)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 cursor-pointer">
+                        <Plus className="w-4 h-4 text-white/60" />
+                      </button>
+                    </div>
                   </div>
                   {openPrice && (
                     <div className="text-xs text-white/60">
@@ -1223,8 +1232,8 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             )}
 
             <div className="space-y-2">
-              <div className="text-xs font-medium text-white/80">Volume</div>
-              <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+              <div className="text-[13px] font-medium text-white/60">Volume</div>
+              <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-12">
                 <Input
                   type="text"
                   inputMode="decimal"
@@ -1236,23 +1245,18 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                     const clampedValue = Math.max(0.01, Math.min(50.00, roundedValue))
                     setVolume(clampedValue.toFixed(2))
                   }}
-                  className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="flex-1 border-0 bg-transparent text-center price-font text-[15px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white font-medium"
                 />
-                <div className="flex items-center justify-center px-3 text-xs text-white/60 min-w-[50px]">
-                  Lots
+
+                <div className="flex items-center gap-1.5 px-3 border-x border-white/5">
+                  <span className="text-[13px] text-white/40 font-medium">Lots</span>
+                  <button onClick={decrementVolume} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Minus className="w-4 h-4 text-white/60" />
+                  </button>
+                  <button onClick={incrementVolume} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Plus className="w-4 h-4 text-white/60" />
+                  </button>
                 </div>
-                <button
-                  onClick={decrementVolume}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Minus className="h-3.5 w-3.5 text-white/60" />
-                </button>
-                <button
-                  onClick={incrementVolume}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5 text-white/60" />
-                </button>
               </div>
             </div>
 
@@ -1267,9 +1271,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             {renderPriceButtonsBordered(false, true)}
 
             <Tabs value={orderType} onValueChange={(value: string) => setOrderType(value as "market" | "limit" | "pending")}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="market">Market</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-[#0a0b10] border border-white/5 p-1 rounded-xl h-11">
+                <TabsTrigger value="market" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Market</TabsTrigger>
+                <TabsTrigger value="pending" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Pending</TabsTrigger>
               </TabsList>
             </Tabs>
 
@@ -1277,9 +1281,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
               <>
                 {/* Pending Order Type Selector: Limit vs Stop */}
                 <Tabs value={pendingOrderType} onValueChange={(value: string) => setPendingOrderType(value as "limit" | "stop")}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="limit">Limit</TabsTrigger>
-                    <TabsTrigger value="stop">Stop</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 bg-[#0a0b10] border border-white/5 p-1 rounded-xl h-11">
+                    <TabsTrigger value="limit" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Limit</TabsTrigger>
+                    <TabsTrigger value="stop" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Stop</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
@@ -1290,29 +1294,25 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                       <HelpCircle className="h-3.5 w-3.5 text-white/40" />
                     </Tooltip>
                   </div>
-                  <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+                  <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-11">
                     <Input
                       type="number"
                       value={openPrice}
                       onChange={(e) => setOpenPrice(e.target.value)}
                       placeholder={currentBuyPrice.toFixed(3)}
-                      className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/40"
+                      className="flex-1 border-0 bg-transparent text-center price-font text-[14px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/20 text-white font-medium"
                     />
-                    <div className="flex items-center justify-center px-3 text-xs text-white/60 min-w-[50px]">
+                    <div className="flex items-center px-3 border-x border-white/5 text-[12px] text-white/40 min-w-[50px] justify-center font-medium">
                       {pendingOrderType === "limit" ? "Limit" : "Stop"}
                     </div>
-                    <button
-                      onClick={() => decrementField(openPrice, setOpenPrice)}
-                      className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                    >
-                      <Minus className="h-3.5 w-3.5 text-white/60" />
-                    </button>
-                    <button
-                      onClick={() => incrementField(openPrice, setOpenPrice)}
-                      className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                    >
-                      <Plus className="h-3.5 w-3.5 text-white/60" />
-                    </button>
+                    <div className="flex items-center gap-1 px-2">
+                      <button onClick={() => decrementField(openPrice, setOpenPrice)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 cursor-pointer">
+                        <Minus className="w-4 h-4 text-white/60" />
+                      </button>
+                      <button onClick={() => incrementField(openPrice, setOpenPrice)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 cursor-pointer">
+                        <Plus className="w-4 h-4 text-white/60" />
+                      </button>
+                    </div>
                   </div>
                   {openPrice && (
                     <div className="text-xs text-white/60">
@@ -1334,8 +1334,8 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             )}
 
             <div className="space-y-2">
-              <div className="text-xs font-medium text-white/80">Volume</div>
-              <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+              <div className="text-[13px] font-medium text-white/60">Volume</div>
+              <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-12">
                 <Input
                   type="text"
                   inputMode="decimal"
@@ -1347,23 +1347,18 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                     const clampedValue = Math.max(0.01, Math.min(50.00, roundedValue))
                     setVolume(clampedValue.toFixed(2))
                   }}
-                  className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="flex-1 border-0 bg-transparent text-center price-font text-[15px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white font-medium"
                 />
-                <div className="flex items-center justify-center px-3 text-xs text-white/60 min-w-[50px]">
-                  Lots
+
+                <div className="flex items-center gap-1.5 px-3 border-x border-white/5">
+                  <span className="text-[13px] text-white/40 font-medium">Lots</span>
+                  <button onClick={decrementVolume} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Minus className="w-4 h-4 text-white/60" />
+                  </button>
+                  <button onClick={incrementVolume} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Plus className="w-4 h-4 text-white/60" />
+                  </button>
                 </div>
-                <button
-                  onClick={decrementVolume}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Minus className="h-3.5 w-3.5 text-white/60" />
-                </button>
-                <button
-                  onClick={incrementVolume}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5 text-white/60" />
-                </button>
               </div>
             </div>
 
@@ -1519,7 +1514,6 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                         }
                       }
 
-                      // For pending orders, validate that openPrice is provided
                       if (orderType === 'pending' && !openPrice) {
                         alert('Please enter an open price for pending orders')
                         return
@@ -1549,30 +1543,31 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                       }
                     }}
                     className={cn(
-                      "w-full font-semibold py-3 px-4 rounded-md transition-all flex flex-col items-center justify-center relative overflow-hidden text-white",
+                      "w-full font-bold h-12 rounded-xl transition-all flex flex-col items-center justify-center relative overflow-hidden text-white shadow-lg active:scale-[0.98]",
                       pendingOrderSide === 'buy' ? 'bg-[#4A9EFF] hover:bg-[#4A9EFF]/90' : 'bg-[#FF5555] hover:bg-[#FF5555]/90',
                       isLoading && "opacity-80"
                     )}
                   >
                     {isLoading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] z-10 focus:outline-none">
-                        <div className="flex gap-1">
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] z-10">
+                        <div className="flex gap-1.5">
                           {[0, 1, 2].map((i) => (
                             <div
                               key={i}
-                              className="w-1.5 h-1.5 bg-white rounded-full opacity-80"
+                              className="w-2 h-2 bg-white rounded-full animate-bounce"
+                              style={{ animationDelay: `${i * 0.15}s` }}
                             />
                           ))}
                         </div>
                       </div>
                     )}
-                    <span className="text-sm">Confirm {pendingOrderSide === 'buy' ? 'Buy' : 'Sell'}</span>
-                    <span className="text-xs opacity-90">{volume} lots</span>
+                    <span className="text-[15px]">Confirm {pendingOrderSide === 'buy' ? 'Buy' : 'Sell'}</span>
+                    <span className="text-[11px] opacity-70 font-medium">{volume} lots</span>
                   </button>
                   <button
                     onClick={() => setPendingOrderSide(null)}
                     disabled={isLoading}
-                    className="w-full bg-[#2a2f36] hover:bg-[#363c45] text-white font-medium py-2.5 px-4 rounded-md text-sm transition-colors disabled:opacity-50"
+                    className="w-full h-11 bg-white/[0.05] hover:bg-white/[0.08] text-white/60 hover:text-white font-medium rounded-xl text-[13px] transition-all disabled:opacity-50 border border-white/5 active:scale-[0.98]"
                   >
                     Cancel
                   </button>
@@ -1591,9 +1586,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             {renderPriceButtonsBordered(false)}
 
             <Tabs value={orderType} onValueChange={(value: string) => setOrderType(value as "market" | "limit" | "pending")}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="market">Market</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-[#0a0b10] border border-white/5 p-1 rounded-xl h-11">
+                <TabsTrigger value="market" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Market</TabsTrigger>
+                <TabsTrigger value="pending" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/40 text-[13px] font-medium transition-all">Pending</TabsTrigger>
               </TabsList>
             </Tabs>
 
@@ -1604,36 +1599,49 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                   <HelpCircle className="h-3.5 w-3.5 text-white/40" />
                 </Tooltip>
               </div>
-              <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+              <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-12">
                 <Input
                   type="number"
                   value={risk}
                   onChange={(e) => setRisk(e.target.value)}
                   placeholder="Not set"
-                  className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/40"
+                  className="flex-1 border-0 bg-transparent text-center price-font text-[15px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/20 text-white font-medium"
                 />
-                <select value={riskMode} onChange={(e) => setRiskMode(e.target.value as "usd" | "percent")} className="w-[70px] border-0 h-9 bg-transparent text-xs text-white focus:outline-none focus:ring-0">
-                  <option value="usd" className="bg-[#1a1f28]">USD</option>
-                  <option value="percent" className="bg-[#1a1f28]">%</option>
-                </select>
-                <button
-                  onClick={() => {
-                    const currentValue = parseFloat(risk) || 0
-                    setRisk(Math.max(0, currentValue - 1).toString())
-                  }}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Minus className="h-3.5 w-3.5 text-white/60" />
-                </button>
-                <button
-                  onClick={() => {
-                    const currentValue = parseFloat(risk) || 0
-                    setRisk((currentValue + 1).toString())
-                  }}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5 text-white/60" />
-                </button>
+
+                <div className="flex items-center border-x border-white/5 bg-white/[0.02]">
+                  <select
+                    value={riskMode}
+                    onChange={(e) => setRiskMode(e.target.value as "usd" | "percent")}
+                    className="bg-transparent border-0 text-[13px] text-white/60 px-2.5 focus:outline-none focus:ring-0 cursor-pointer appearance-none min-w-[65px] text-center"
+                  >
+                    <option value="usd" className="bg-[#0a0b10]">USD</option>
+                    <option value="percent" className="bg-[#0a0b10]">%</option>
+                  </select>
+                  <svg className="w-3 h-3 text-white/30 -ml-1.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+
+                <div className="flex items-center gap-1 px-3">
+                  <button
+                    onClick={() => {
+                      const currentValue = parseFloat(risk) || 0
+                      setRisk(Math.max(0, currentValue - 1).toString())
+                    }}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Minus className="w-4 h-4 text-white/60" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      const currentValue = parseFloat(risk) || 0
+                      setRisk((currentValue + 1).toString())
+                    }}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4 text-white/60" />
+                  </button>
+                </div>
               </div>
               {riskMode === "percent" && risk && (
                 <div className="text-xs text-white/60 text-center">
@@ -1654,40 +1662,37 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                   <HelpCircle className="h-3.5 w-3.5 text-white/40" />
                 </Tooltip>
               </div>
-              <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+              <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-12">
                 <Input
                   type="number"
                   value={stopLoss}
                   onChange={(e) => setStopLoss(e.target.value)}
                   placeholder="Not set"
-                  className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/40"
+                  className="flex-1 border-0 bg-transparent text-center price-font text-[15px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/20 text-white font-medium"
                 />
-                <select
-                  value={stopLossMode}
-                  onChange={(e) => setStopLossMode(e.target.value as "pips" | "price")}
-                  className="w-[70px] border-0 h-9 bg-transparent text-xs text-white focus:outline-none focus:ring-0 text-center"
-                >
-                  <option value="pips" className="bg-[#1a1f28]">Pips</option>
-                  <option value="price" className="bg-[#1a1f28]">Price</option>
-                </select>
-                <button
-                  onClick={() => {
-                    const currentValue = parseFloat(stopLoss) || 0
-                    setStopLoss((currentValue - 1).toString())
-                  }}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Minus className="h-3.5 w-3.5 text-white/60" />
-                </button>
-                <button
-                  onClick={() => {
-                    const currentValue = parseFloat(stopLoss) || 0
-                    setStopLoss((currentValue + 1).toString())
-                  }}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5 text-white/60" />
-                </button>
+
+                <div className="flex items-center border-x border-white/5 bg-white/[0.02]">
+                  <select
+                    value={stopLossMode}
+                    onChange={(e) => setStopLossMode(e.target.value as "pips" | "price")}
+                    className="bg-transparent border-0 text-[13px] text-white/60 px-2.5 focus:outline-none focus:ring-0 cursor-pointer appearance-none min-w-[65px] text-center"
+                  >
+                    <option value="pips" className="bg-[#0a0b10]">Pips</option>
+                    <option value="price" className="bg-[#0a0b10]">Price</option>
+                  </select>
+                  <svg className="w-3 h-3 text-white/30 -ml-1.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+
+                <div className="flex items-center gap-1 px-3">
+                  <button onClick={() => setStopLoss((parseFloat(stopLoss) - 1 || -1).toString())} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Minus className="w-4 h-4 text-white/60" />
+                  </button>
+                  <button onClick={() => setStopLoss((parseFloat(stopLoss) + 1 || 1).toString())} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Plus className="w-4 h-4 text-white/60" />
+                  </button>
+                </div>
               </div>
               {(calculatedStopLossPrice !== null || (stopLossMode === "price" && stopLoss)) && calculateRiskBasedVolume !== null && (
                 <div className="space-y-0.5">
@@ -1718,40 +1723,37 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                   <HelpCircle className="h-3.5 w-3.5 text-white/40" />
                 </Tooltip>
               </div>
-              <div className="flex items-stretch border border-white/10 rounded-md overflow-hidden bg-white/[0.02] focus-within:border-[#8B5CF6]">
+              <div className="flex items-stretch border border-white/10 rounded-xl overflow-hidden bg-[#0a0b10] h-12">
                 <Input
                   type="number"
                   value={takeProfit}
                   onChange={(e) => setTakeProfit(e.target.value)}
                   placeholder="Not set"
-                  className="flex-1 border-0 bg-transparent text-center price-font text-sm h-9 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/40"
+                  className="flex-1 border-0 bg-transparent text-center price-font text-[15px] h-full focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-white/20 text-white font-medium"
                 />
-                <select
-                  value={takeProfitMode}
-                  onChange={(e) => setTakeProfitMode(e.target.value as "pips" | "price")}
-                  className="w-[70px] border-0 h-9 bg-transparent text-xs text-white focus:outline-none focus:ring-0 text-center"
-                >
-                  <option value="pips" className="bg-[#1a1f28]">Pips</option>
-                  <option value="price" className="bg-[#1a1f28]">Price</option>
-                </select>
-                <button
-                  onClick={() => {
-                    const currentValue = parseFloat(takeProfit) || 0
-                    setTakeProfit(Math.max(0, currentValue - 1).toString())
-                  }}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Minus className="h-3.5 w-3.5 text-white/60" />
-                </button>
-                <button
-                  onClick={() => {
-                    const currentValue = parseFloat(takeProfit) || 0
-                    setTakeProfit((currentValue + 1).toString())
-                  }}
-                  className="h-9 w-9 flex items-center justify-center hover:bg-white/5 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5 text-white/60" />
-                </button>
+
+                <div className="flex items-center border-x border-white/5 bg-white/[0.02]">
+                  <select
+                    value={takeProfitMode}
+                    onChange={(e) => setTakeProfitMode(e.target.value as "pips" | "price")}
+                    className="bg-transparent border-0 text-[13px] text-white/60 px-2.5 focus:outline-none focus:ring-0 cursor-pointer appearance-none min-w-[65px] text-center"
+                  >
+                    <option value="pips" className="bg-[#0a0b10]">Pips</option>
+                    <option value="price" className="bg-[#0a0b10]">Price</option>
+                  </select>
+                  <svg className="w-3 h-3 text-white/30 -ml-1.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+
+                <div className="flex items-center gap-1 px-3">
+                  <button onClick={() => setTakeProfit(Math.max(0, parseFloat(takeProfit) - 1 || 0).toString())} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Minus className="w-4 h-4 text-white/60" />
+                  </button>
+                  <button onClick={() => setTakeProfit((parseFloat(takeProfit) + 1 || 1).toString())} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 active:scale-95 transition-all cursor-pointer">
+                    <Plus className="w-4 h-4 text-white/60" />
+                  </button>
+                </div>
               </div>
               {(calculatedTakeProfitPrice !== null || (takeProfitMode === "price" && takeProfit)) && calculateRiskBasedVolume !== null && (
                 <div className="space-y-0.5">

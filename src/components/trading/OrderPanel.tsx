@@ -604,9 +604,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             setPendingOrderSide(null);
           }
         }}
-        disabled={isLoading}
+        disabled={true}
         className={cn(
-          "rounded-xl p-4 bg-[#FF5555] hover:bg-[#FF5555]/90 cursor-pointer text-left relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#FF5555]",
+          "rounded-xl p-4 bg-[#FF5555] opacity-50 cursor-not-allowed text-left relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#FF5555]",
           isLoading && "opacity-80"
         )}
       >
@@ -654,9 +654,9 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
             setPendingOrderSide(null);
           }
         }}
-        disabled={isLoading}
+        disabled={true}
         className={cn(
-          "rounded-xl p-4 bg-[#4A9EFF] hover:bg-[#4A9EFF]/90 cursor-pointer text-right relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#4A9EFF]",
+          "rounded-xl p-4 bg-[#4A9EFF] opacity-50 cursor-not-allowed text-right relative overflow-hidden transition-all text-white min-h-[72px] border-2 border-[#4A9EFF]",
           isLoading && "opacity-80"
         )}
       >
@@ -758,59 +758,11 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
       <div className="relative grid grid-cols-2 gap-3">
         <button
           type="button"
+          disabled={true}
           className={cn(
-            "rounded-xl p-4 border-2 transition-all cursor-pointer text-left min-h-[72px]",
-            sellButtonBorder,
-            !readOnly && sellButtonHover
+            "rounded-xl p-4 border-2 transition-all opacity-50 cursor-not-allowed text-left min-h-[72px]",
+            sellButtonBorder
           )}
-          onClick={readOnly ? undefined : () => {
-            if (isMarketClosed) {
-              setMarketClosedToast(marketClosedMessage)
-              return
-            }
-            if (showConfirmation) {
-              setPendingOrderSide('sell')
-            } else {
-              if (!onSell) return
-              if (!finalVolume || finalVolume <= 0) return
-              if (orderType === 'pending' && !finalOpenPrice) {
-                alert('Please enter an open price for pending orders')
-                return
-              }
-
-              let sellStopLoss = finalStopLoss
-              let sellTakeProfit = finalTakeProfit
-
-              if (formType === "risk-calculator" && stopLossMode === "pips" && stopLoss) {
-                const pips = parseFloat(stopLoss)
-                if (!isNaN(pips)) {
-                  const pipSize = getPipSize
-                  const entry = orderType === 'market' ? currentSellPrice : (finalOpenPrice || 0)
-                  sellStopLoss = entry + (pips * pipSize)
-                }
-              }
-
-              if (formType === "risk-calculator" && takeProfitMode === "pips" && takeProfit) {
-                const pips = parseFloat(takeProfit)
-                if (!isNaN(pips) && pips > 0) {
-                  const pipSize = getPipSize
-                  const entry = orderType === 'market' ? currentSellPrice : (finalOpenPrice || 0)
-                  sellTakeProfit = entry - (pips * pipSize)
-                }
-              }
-
-              const orderData: OrderData = {
-                orderType,
-                pendingOrderType: orderType === "pending" ? pendingOrderType : undefined,
-                volume: finalVolume,
-                openPrice: orderType === 'market' ? currentSellPrice : finalOpenPrice,
-                stopLoss: sellStopLoss,
-                takeProfit: sellTakeProfit,
-              }
-              onSell(orderData)
-            }
-          }}
-          disabled={readOnly}
         >
           <div className="text-[13px] text-white/50 mb-0.5 font-medium">Sell</div>
           <div className={cn("price-font font-bold text-[15px] leading-none flex items-baseline gap-0.5", sellButtonTextColor)}>
@@ -822,59 +774,11 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
 
         <button
           type="button"
+          disabled={true}
           className={cn(
-            "rounded-xl p-4 border-2 transition-all cursor-pointer text-right min-h-[72px]",
-            buyButtonBorder,
-            !readOnly && buyButtonHover
+            "rounded-xl p-4 border-2 transition-all opacity-50 cursor-not-allowed text-right min-h-[72px]",
+            buyButtonBorder
           )}
-          onClick={readOnly ? undefined : () => {
-            if (isMarketClosed) {
-              setMarketClosedToast(marketClosedMessage)
-              return
-            }
-            if (showConfirmation) {
-              setPendingOrderSide('buy')
-            } else {
-              if (!onBuy) return
-              if (!finalVolume || finalVolume <= 0) return
-              if (orderType === 'pending' && !finalOpenPrice) {
-                alert('Please enter an open price for pending orders')
-                return
-              }
-
-              let buyStopLoss = finalStopLoss
-              let buyTakeProfit = finalTakeProfit
-
-              if (formType === "risk-calculator" && stopLossMode === "pips" && stopLoss) {
-                const pips = parseFloat(stopLoss)
-                if (!isNaN(pips)) {
-                  const pipSize = getPipSize
-                  const entry = orderType === 'market' ? currentBuyPrice : (finalOpenPrice || 0)
-                  buyStopLoss = entry - (pips * pipSize)
-                }
-              }
-
-              if (formType === "risk-calculator" && takeProfitMode === "pips" && takeProfit) {
-                const pips = parseFloat(takeProfit)
-                if (!isNaN(pips) && pips > 0) {
-                  const pipSize = getPipSize
-                  const entry = orderType === 'market' ? currentBuyPrice : (finalOpenPrice || 0)
-                  buyTakeProfit = entry + (pips * pipSize)
-                }
-              }
-
-              const orderData: OrderData = {
-                orderType,
-                pendingOrderType: orderType === "pending" ? pendingOrderType : undefined,
-                volume: finalVolume,
-                openPrice: orderType === 'market' ? currentBuyPrice : finalOpenPrice,
-                stopLoss: buyStopLoss,
-                takeProfit: buyTakeProfit,
-              }
-              onBuy(orderData)
-            }
-          }}
-          disabled={readOnly}
         >
           <div className="text-[13px] text-white/50 mb-0.5 font-medium">Buy</div>
           <div className={cn("price-font font-bold text-[15px] leading-none flex items-baseline justify-end gap-0.5", buyButtonTextColor)}>
@@ -1472,7 +1376,7 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
 
                 <div className="flex flex-col gap-2 pt-2">
                   <button
-                    disabled={isLoading}
+                    disabled={true}
                     onClick={async () => {
                       if (isMarketClosed) {
                         setMarketClosedToast(marketClosedMessage)
@@ -1543,8 +1447,8 @@ const OrderPanel: React.FC<OrderPanelProps> = ({
                       }
                     }}
                     className={cn(
-                      "w-full font-bold h-12 rounded-xl transition-all flex flex-col items-center justify-center relative overflow-hidden text-white shadow-lg active:scale-[0.98]",
-                      pendingOrderSide === 'buy' ? 'bg-[#4A9EFF] hover:bg-[#4A9EFF]/90' : 'bg-[#FF5555] hover:bg-[#FF5555]/90',
+                      "w-full font-bold h-12 rounded-xl transition-all flex flex-col items-center justify-center relative overflow-hidden text-white shadow-lg opacity-50 cursor-not-allowed",
+                      pendingOrderSide === 'buy' ? 'bg-[#4A9EFF]' : 'bg-[#FF5555]',
                       isLoading && "opacity-80"
                     )}
                   >

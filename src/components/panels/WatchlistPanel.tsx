@@ -101,7 +101,7 @@ const InstrumentRow = ({ item, isVisible, toggleFavorite, lastQuote, handleDragS
           addNavbarTab(item.symbol);
         }
       }}
-      className="group grid grid-cols-[30px_36px_minmax(100px,1fr)_auto_auto_auto_30px] gap-0 items-center border-b border-gray-800 hover:bg-[#1c252f] transition-colors h-[40px] cursor-pointer min-w-0"
+      className="group grid grid-cols-[30px_36px_130px_auto_auto_auto_30px_1fr] gap-0 items-center border-b border-gray-800 hover:bg-[#1c252f] transition-colors h-[40px] cursor-pointer min-w-0"
     >
       {/* Grip Handle */}
       <div className="flex items-center justify-center text-[#565c66] cursor-grab active:cursor-grabbing bg-[#0b0e14] group-hover:bg-[#1c252f] h-full transition-colors border-r border-gray-800">
@@ -161,7 +161,7 @@ const InstrumentRow = ({ item, isVisible, toggleFavorite, lastQuote, handleDragS
       )}
 
       {/* Star / Favorite */}
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center w-[30px] h-full">
         <button
           onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
           className={`text-[14px] transition-colors ${item.favorite ? 'text-[#f59e0b]' : 'text-gray-600 hover:text-gray-400'}`}
@@ -169,6 +169,9 @@ const InstrumentRow = ({ item, isVisible, toggleFavorite, lastQuote, handleDragS
           {item.favorite ? <FiStar fill="currentColor" /> : <FiStar />}
         </button>
       </div>
+
+      {/* Empty filler column to take up remaining space */}
+      <div className="h-full"></div>
 
     </div>
   )
@@ -371,7 +374,7 @@ export default function WatchlistPanel({ onClose }) {
       </div>
 
       {/* Table Header */}
-      <div className="grid grid-cols-[30px_36px_minmax(100px,1fr)_auto_auto_auto_30px] gap-0 border-b border-gray-800 bg-background text-[11px] font-medium text-gray-500 uppercase min-w-0">
+      <div className="grid grid-cols-[30px_36px_130px_auto_auto_auto_30px_1fr] gap-0 border-b border-gray-800 bg-background text-[11px] font-medium text-gray-500 uppercase min-w-0">
         <div className="py-2 text-center bg-[#0b0e14] border-r border-gray-800"></div> {/* Grip placeholder */}
         <div className="py-2 text-center bg-[#0b0e14] border-r border-gray-800"></div> {/* Flag placeholder */}
         <div className="py-2 pl-2 text-left bg-[#0b0e14] border-r border-gray-800 min-w-[100px] flex-shrink-0">Symbol</div>
@@ -380,7 +383,8 @@ export default function WatchlistPanel({ onClose }) {
         {isVisible('ask') && <div className="py-2 px-1 text-center w-[90px] min-w-[90px] flex-shrink-0">Ask</div>}
         {isVisible('change') && <div className="py-2 px-1 text-center w-[70px] min-w-[70px] flex-shrink-0">1D</div>}
 
-        <div className="py-2 text-center"></div> {/* Star placeholder */}
+        <div className="py-2 text-center w-[30px]"></div> {/* Star placeholder */}
+        <div className="py-2"></div> {/* Filler placeholder */}
       </div>
 
       {/* Table Content */}

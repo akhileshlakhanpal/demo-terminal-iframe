@@ -50,7 +50,7 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
   const accountIds = useMemo(() => mt5Accounts.map(account => account.accountId), [mt5Accounts])
   // Load current account from localStorage or URL params on mount
   useEffect(() => {
-    // Demo Mode: Force demo account
+    // Demo Mode: Force demo account with 'pro' group to fetch all instruments
     const demoAccountId = 'demo-10001';
     setCurrentAccountIdState(demoAccountId);
     setMt5Accounts([{
@@ -58,7 +58,7 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
       accountId: demoAccountId,
       displayAccountId: '10001',
       accountType: 'Demo',
-      group: 'Demo',
+      group: 'pro',
       linkedAt: new Date().toISOString()
     }]);
     setIsLoading(false);
